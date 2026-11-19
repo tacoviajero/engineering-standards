@@ -39,25 +39,53 @@ function Find-GitRoots {
     }
 }
 
+function Invoke-GitReadOnlyQuery {
+    param([string]$Directory, [string[]]$Arguments)
+    # Windows PowerShell 5.1 convierte stderr nativo en errores de PowerShell.
+    $ErrorActionPreference = 'Continue'
+    $output = @(& git --no-optional-locks -C $Directory @Arguments 2>$null)
+    [pscustomobject]@{ Output = $output; ExitCode = $LASTEXITCODE }
+}
+
 $roots = @(Find-GitRoots -Directory (Resolve-Path -LiteralPath $RootDirectory).Path -Depth 0)
 $results = @()
 foreach ($directory in $roots) {
-    $origin = ((& git -C $directory remote get-url origin 2>$null) -join '').Trim()
-    if ($LASTEXITCODE -ne 0) { continue }
-    if ($origin -notmatch 'github\.com[:/]tacoviajero/([a-zA-Z0-9._-]+?)(?:\.git)?$') { continue }
+    $localQuery = Invoke-GitReadOnlyQuery -Directory $directory -Arguments @('rev-parse', 'HEAD')
+    if ($localQuery.ExitCode -ne 0) {
+        Write-Warning "Repositorio local no verificable: $directory (HEAD o metadatos Git no disponibles)."
+        continue
+    }
+    $originQuery = Invoke-GitReadOnlyQuery -Directory $directory -Arguments @('remote', 'get-url', 'origin')
+    $origin = ($originQuery.Output -join '').Trim()
+    $project = Split-Path -Path $directory -Leaf
+    $remoteState = 'No verificable'
+    if ($originQuery.ExitCode -eq 0 -and $origin) {
+        if ($origin -notmatch 'github\.com[:/]tacoviajero/([a-zA-Z0-9._-]+?)(?:\.git)?$') { continue }
+        $project = $Matches[1]
+        if ($expected -notcontains $project) { continue }
+    } else {
+        $remotesQuery = Invoke-GitReadOnlyQuery -Directory $directory -Arguments @('remote')
+        if ($remotesQuery.ExitCode -eq 0 -and $remotesQuery.Output -notcontains 'origin') {
+            $remoteState = 'Ausente (sin origin)'
+        }
+    }
 
-    $project = $Matches[1]
-    if ($expected -notcontains $project) { continue }
-
-    $localSha = ((& git -C $directory rev-parse HEAD 2>$null) -join '').Trim()
+    $localSha = ($localQuery.Output -join '').Trim()
     $branch = ((& git -C $directory symbolic-ref --quiet --short HEAD 2>$null) -join '').Trim()
     if (-not $branch) { $branch = '(HEAD separado)' }
-    $changes = @(& git -C $directory status --porcelain=v1 2>$null)
+    $changes = @(& git --no-optional-locks -C $directory status --porcelain=v1 2>$null)
 
-    $remoteLines = @(& git -C $directory ls-remote origin refs/heads/main 2>$null)
     $remoteSha = ''
-    if ($LASTEXITCODE -eq 0 -and $remoteLines.Count -gt 0) {
-        $remoteSha = ($remoteLines[0] -split '\s+')[0]
+    if ($originQuery.ExitCode -eq 0 -and $origin) {
+        $remoteQuery = Invoke-GitReadOnlyQuery -Directory $directory -Arguments @('ls-remote', 'origin', 'refs/heads/main')
+        if ($remoteQuery.ExitCode -ne 0) {
+            $remoteState = 'Inaccesible (consulta fallida)'
+        } elseif ($remoteQuery.Output.Count -eq 0) {
+            $remoteState = 'No verificable (sin main)'
+        } elseif ($remoteQuery.Output[0] -match '^([0-9a-fA-F]{40}|[0-9a-fA-F]{64})\s+refs/heads/main$') {
+            $remoteSha = $Matches[1]
+            $remoteState = 'Verificado'
+        }
     }
 
     $policyReference = $false
@@ -77,6 +105,7 @@ foreach ($directory in $roots) {
         Proyecto = $project
         Carpeta = $directory
         Rama = $branch
+        EstadoRemoto = $remoteState
         Revision = $revision
         CambiosLocales = $changes.Count
         ReferenciaPolitica = $policyReference
@@ -88,7 +117,7 @@ foreach ($directory in $roots) {
 if ($results.Count -eq 0) {
     Write-Warning 'No se encontraron repositorios esperados bajo la raiz y profundidad indicadas.'
 } else {
-    $results | Sort-Object Proyecto, Carpeta | Format-Table Proyecto, Rama, Revision, CambiosLocales, ReferenciaPolitica, Carpeta -AutoSize
+    $results | Sort-Object Proyecto, Carpeta | Format-Table Proyecto, Rama, EstadoRemoto, Revision, CambiosLocales, ReferenciaPolitica, Carpeta -AutoSize
     Write-Output ''
     Write-Output 'Nota: distintos commits no indican por si solos cual rama esta adelantada.'
 }
