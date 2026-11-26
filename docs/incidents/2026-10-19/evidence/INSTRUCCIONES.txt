@@ -1,0 +1,32 @@
+RECUPERACIÓN DE TABLAS INTERNAS DE MARIADB EN XAMPP
+===================================================
+
+Usar cuando MySQL de XAMPP cierre inmediatamente y mysqld.exe --console indique
+que mysql.proxies_priv o mysql.columns_priv tiene formato incorrecto, checksum
+incorrecto o está marcada como crashed.
+
+Este mecanismo no modifica la base tizon_mvp. Crea un respaldo completo de la
+base interna mysql, mueve las tablas dañadas a cuarentena y hace que
+mysql_upgrade las reconstruya con los archivos predeterminados de la versión de
+MariaDB instalada en XAMPP.
+
+1. Detener MySQL desde XAMPP y confirmar que no haya procesos mysqld.exe.
+2. Abrir PowerShell como administrador.
+3. Ejecutar desde esta carpeta:
+
+   Set-ExecutionPolicy -Scope Process Bypass
+   .\recuperar_mysql_xampp.ps1
+
+El mecanismo predeterminado reconstruye proxies_priv y columns_priv, que fueron
+las tablas dañadas en el incidente del 19 de octubre de 2026.
+
+Para reconstruir otra tabla Aria identificada explícitamente por el registro:
+
+   .\recuperar_mysql_xampp.ps1 -Tables @('nombre_de_tabla')
+
+Al finalizar, iniciar MySQL normalmente desde XAMPP. El respaldo y los archivos
+apartados permanecen dentro de C:\xampp\mysql\data.
+
+La reconstrucción elimina los privilegios PROXY o privilegios por columna que
+estuvieran guardados específicamente en las tablas reconstruidas. No elimina
+usuarios de El Tizón, ventas, pedidos ni información de tizon_mvp.
