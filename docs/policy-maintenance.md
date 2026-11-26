@@ -2,7 +2,10 @@
 
 ## Fuente canónica y alcance
 
-La política obligatoria se mantiene **una sola vez** en [`policies/effort-validation.md`](../policies/effort-validation.md), en la rama `main` de este repositorio.
+Las políticas obligatorias se mantienen **una sola vez** en la rama `main` de este repositorio:
+
+- [`policies/effort-validation.md`](../policies/effort-validation.md): esfuerzo y validación proporcional.
+- [`policies/code-language-conventions.md`](../policies/code-language-conventions.md): idioma y nomenclatura técnica.
 
 Los cinco repositorios consumidores son:
 

@@ -6,6 +6,8 @@ Estándares compartidos de ingeniería para los proyectos de software de TacoVia
 
 - [Política obligatoria de esfuerzo y validación proporcional](policies/effort-validation.md): documento canónico para ajustar el esfuerzo y las comprobaciones al riesgo real de cada tarea.
 
+- [Política obligatoria de idioma y nomenclatura técnica](policies/code-language-conventions.md): convenciones en inglés para implementación y separación de etiquetas visibles.
+
 ## Registro permanente de incidencias
 
 - [Índice de incidencias técnicas](docs/incidents/README.md): errores, evidencia, recuperación, límites del diagnóstico y aprendizajes reutilizables.
