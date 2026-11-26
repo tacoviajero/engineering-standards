@@ -4,13 +4,20 @@
 **Estado:** antecedente respaldado por archivos de recuperación en Tizón; **no se dispone de evidencia de ejecución exitosa del script ni de causa raíz**.  
 **Entorno documentado:** XAMPP en Windows, esquema interno `mysql` de MariaDB. La documentación presupone `C:\xampp` y puerto 3306.
 
-## Fuentes originales
+## Evidencias originales archivadas
 
-Los archivos originales están versionados en `tacoviajero/tizon`, rama `main`:
+Las copias originales se conservan **sin cambios** dentro de este registro:
 
-- [INSTRUCCIONES.txt](https://github.com/tacoviajero/tizon/blob/main/v1.0/docs/recovery/windows-xampp/INSTRUCCIONES.txt)
-- [recuperar_mysql_xampp.ps1](https://github.com/tacoviajero/tizon/blob/main/v1.0/docs/recovery/windows-xampp/recuperar_mysql_xampp.ps1)
-- [Commit que los incorporó al repositorio (22-11-2026)](https://github.com/tacoviajero/tizon/commit/92b86f6b4f4b15e88eef2faa36df94d0ab0a09eb)
+- [INSTRUCCIONES.txt](2026-10-19/evidence/INSTRUCCIONES.txt)
+- [recuperar_mysql_xampp.ps1](2026-10-19/evidence/recuperar_mysql_xampp.ps1)
+
+**Procedencia:** `tacoviajero/tizon`, rama `main`, carpeta `v1.0/docs/recovery/windows-xampp/`:
+
+- [Instrucciones en Tizón](https://github.com/tacoviajero/tizon/blob/main/v1.0/docs/recovery/windows-xampp/INSTRUCCIONES.txt)
+- [Script en Tizón](https://github.com/tacoviajero/tizon/blob/main/v1.0/docs/recovery/windows-xampp/recuperar_mysql_xampp.ps1)
+- [Commit que los incorporó a Tizón (22-11-2026)](https://github.com/tacoviajero/tizon/commit/92b86f6b4f4b15e88eef2faa36df94d0ab0a09eb)
+
+El script archivado es evidencia histórica y **no se ejecuta automáticamente** ni constituye una recomendación de ejecutarlo sin revisión.
 
 La fecha del incidente procede del texto de instrucciones, **no** de la fecha del commit. No hay en los archivos una bitácora del incidente que confirme exactamente cuándo se ejecutó un procedimiento de recuperación.
 
