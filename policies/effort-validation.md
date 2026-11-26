@@ -65,6 +65,18 @@ Aplica las siguientes reglas:
 7. No conviertas una advertencia no relacionada en una nueva tarea.
 8. No ejecutes procesos indefinidos de análisis, reparación y nueva validación.
 
+### Limpieza obligatoria de recursos temporales
+
+Toda prueba automatizada que cree recursos temporales debe **registrarlos y limpiarlos al finalizar, tanto si pasa como si falla, se interrumpe o lanza una excepción**. Esto incluye bases y esquemas de datos, tablas, archivos, directorios, procesos, contenedores, puertos reservados y servicios de prueba.
+
+- Implementa la limpieza en un mecanismo garantizado de finalización (por ejemplo, `finally`, `tearDown`, fixtures con finalizador o hooks equivalentes), sin depender de que la prueba alcance su último paso.
+- Aísla y etiqueta claramente los recursos de prueba. Nunca hagas borrados mediante comodines que puedan alcanzar recursos persistentes o ajenos; comprueba que el recurso pertenece a esa ejecución antes de eliminarlo.
+- Si falla la limpieza, repórtalo como fallo relevante, indica el recurso pendiente y ofrece una corrección segura. No ocultes errores de limpieza ni sacrifiques el error original.
+- Si deben conservarse artefactos para diagnóstico, hazlo de forma explícita y limitada, fuera de los recursos operativos compartidos; aplica caducidad o limpieza posterior.
+- Verifica de forma proporcional al riesgo que el mecanismo limpia tanto rutas exitosas como fallidas, sin repetir suites completas innecesariamente.
+
+Esta obligación es **permanente y transversal**: los comandos o adaptaciones específicos pertenecen a `docs/validation.md` de cada producto.
+
 Las verificaciones obligatorias del repositorio o de CI deben respetarse. Si resultan excesivas, propone modificar esa política por separado en lugar de omitirlas silenciosamente.
 
 ## 4. Límites de autonomía
