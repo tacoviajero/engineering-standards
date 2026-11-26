@@ -7,6 +7,7 @@ Este directorio conserva diagnósticos y recuperaciones útiles para más de un 
 | Fecha | Incidencia | Estado |
 | --- | --- | --- |
 | 2026-11-25 | [Corrupción de metadatos de replicación y tablas del sistema en MariaDB/XAMPP](2026-11-25-mariadb-corruption.md) | Recuperada; causa original no determinada |
+| 2026-10-19 | [Daño de tablas internas de MariaDB en XAMPP — proxies_priv / columns_priv](2026-10-19-mariadb-system-tables.md) | Procedimiento original localizado en Tizón; ejecución y causa no verificadas |
 | 2026-10-23/24 (fecha aproximada del evento) | [Fallo previo de la instancia de pruebas station-modes-mariadb](2026-10-station-modes-mariadb.md) | Antecedente documentado parcialmente; falta localizar el informe original |
 
 ## Convenciones
